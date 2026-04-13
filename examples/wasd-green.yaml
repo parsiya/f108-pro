@@ -1,0 +1,7 @@
+# WASD green on a dim blue background.
+all: [0, 0, 50]
+keys:
+  w: [0, 255, 0]
+  a: [0, 255, 0]
+  s: [0, 255, 0]
+  d: [0, 255, 0]

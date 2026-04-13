@@ -1,0 +1,12 @@
+# Remap CapsLock to Left Ctrl and add media keys to F-row.
+# Layer: "normal" (default) or "fn".
+layer: normal
+
+keys:
+  capslock: lctrl
+  f1: media:play
+  f2: media:prev
+  f3: media:next
+  f4: media:voldown
+  f5: media:volup
+  f6: media:mute
