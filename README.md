@@ -3,7 +3,7 @@ A command-line tool for configuring the Aula F108 Pro mechanical keyboard on
 Linux, WSL2, and Windows. Supports backlight mode control, per-key RGB, key
 remapping, LCD clock sync, and LCD image upload.
 
-Please read the accompanying blog for details and discussion:
+Please read the accompanying blog for details and discussion:  
 [AI Borked my Keyboard - Reversing the Aula F108 Pro Software][blog].
 
 [blog]: https://parsiya.net/blog/ai-borked-keyboard/
