@@ -1,6 +1,6 @@
 # f108-pro
 A command-line tool for configuring the Aula F108 Pro mechanical keyboard on
-Linux, WSL2, and Windows. Supports backlight mode control, per-key RGB, key
+macOS, Linux, WSL2, and Windows. Supports backlight mode control, per-key RGB, key
 remapping, LCD clock sync, and LCD image upload.
 
 Please read the accompanying blog for details and discussion:  
@@ -20,6 +20,19 @@ Please read the accompanying blog for details and discussion:
   keyboard's 240x135 LCD screen.
 
 ## Setup
+
+### macOS
+The tool uses the native IOKit HID backend and opens the keyboard in
+non-exclusive mode, so normal key input continues while the tool is running.
+No additional drivers or libraries are required.
+
+```bash
+go build .
+```
+
+If macOS reports `not permitted`, grant the terminal or installed application
+Input Monitoring access in **System Settings > Privacy & Security**, then
+restart it.
 
 ### Windows
 The tool uses the native HID API (`hid.dll`) and does not need any additional
@@ -296,14 +309,15 @@ mkimage -o output.bin -hex FF00FF
 ```
 
 ### dumphid
-Dumps HID report descriptors from all keyboard USB interfaces.
+Dumps HID report descriptors from all keyboard USB interfaces on Linux.
 
 ```bash
 go build ./cmd/dumphid/
 ```
 
-### hidprobe (Windows only)
-Enumerates HID devices using the Windows native HID API.
+### hidprobe
+Enumerates the keyboard's HID interfaces on Windows and macOS. On macOS it
+also verifies that both vendor interfaces can be opened in non-exclusive mode.
 
 ```bash
 go build ./cmd/hidprobe/
