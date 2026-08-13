@@ -1,3 +1,5 @@
+//go:build linux
+
 package main
 
 import (
@@ -28,10 +30,10 @@ func main() {
 
 		buf := make([]byte, 4096)
 		n, err := dev.Control(
-			0x81,            // Device-to-host, Standard, Interface.
-			0x06,            // GET_DESCRIPTOR.
-			0x2200,          // Report descriptor type (0x22) in high byte.
-			uint16(ifNum),   // Interface number.
+			0x81,          // Device-to-host, Standard, Interface.
+			0x06,          // GET_DESCRIPTOR.
+			0x2200,        // Report descriptor type (0x22) in high byte.
+			uint16(ifNum), // Interface number.
 			buf,
 		)
 		if err != nil {
