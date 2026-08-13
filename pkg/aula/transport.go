@@ -1,8 +1,9 @@
 package aula
 
 // Transport abstracts the OS-level USB/HID communication with the keyboard.
-// Two implementations exist:
+// Platform-specific implementations exist:
 //   - transport_linux.go: uses gousb (libusb) for Linux
+//   - transport_darwin.go: uses HIDAPI/IOKit for macOS
 //   - transport_windows.go: uses native Windows HID API (hid.dll)
 type Transport interface {
 	// SetFeatureReport sends a 64-byte HID feature report on interface 3.
