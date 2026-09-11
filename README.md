@@ -1,7 +1,7 @@
 # f108-pro
 A command-line tool for configuring the Aula F108 Pro mechanical keyboard on
-Linux, WSL2, and Windows. Supports backlight mode control, per-key RGB, key
-remapping, LCD clock sync, and LCD image upload.
+Linux, WSL2, Windows, and macOS. Supports backlight mode control, per-key
+RGB, key remapping, LCD clock sync, and LCD image upload.
 
 Please read the accompanying blog for details and discussion:  
 [AI Borked my Keyboard - Reversing the Aula F108 Pro Software][blog].
@@ -87,6 +87,33 @@ Build:
 ```bash
 go build .
 ```
+
+### macOS
+Not officially supported by the upstream vendor tooling, but confirmed
+working natively (Apple Silicon). Requires libusb via Homebrew.
+
+```bash
+brew install libusb pkg-config
+CGO_ENABLED=1 go build .
+```
+
+macOS's kernel HID driver holds the device exclusively, so libusb needs
+elevated privileges to detach it and claim the interface. Run
+device-touching commands (anything except `f108-pro keys` and
+`f108-pro modes`, which don't open the device) with `sudo`:
+
+```bash
+sudo ./f108-pro remap printscreen insert
+```
+
+Without `sudo` this fails with:
+
+```
+error: getting config: Can't detach kernel driver of the device vid=0c45,pid=800a,... libusb: bad access [code -3]
+```
+
+No udev-equivalent permission workaround (to avoid `sudo`) has been found
+for macOS yet.
 
 ### Ghidra MCP
 If you want to follow along and let (A)I reverse the binary.
@@ -331,7 +358,7 @@ via FN key combos (e.g., FN + Left Shift to toggle light bar effects).
   interrupt transfers (interface 2 for LCD data)
 * Readback required after begin/init/apply commands
 * Command delay: 35ms between packets
-* Linux backend: `gousb` (libusb wrapper, requires cgo)
+* Linux/macOS backend: `gousb` (libusb wrapper, requires cgo)
 * Windows backend: native HID API (`hid.dll` + `setupapi.dll`, pure Go, no
   cgo)
 
