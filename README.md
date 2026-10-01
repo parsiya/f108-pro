@@ -201,7 +201,12 @@ f108-pro lcd image.bin
 keyboard. See [ai-docs/lcd-upload-investigation](ai-docs/lcd-upload-investigation.md)
 
 ### Key Remapping
+# Send over the 2.4G dongle (Linux only, experimental):
+f108-pro remap --wireless capslock lctrl
+f108-pro remap --wireless --fn insert a
 
+# Restore specific keys over 2.4G:
+f108-pro remap --wireless --reset insert
 ```bash
 # Swap CapsLock and Left Ctrl:
 f108-pro remap capslock lctrl

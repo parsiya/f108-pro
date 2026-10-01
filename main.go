@@ -318,13 +318,34 @@ func (c *PerkeyCmd) Run() error {
 
 // RemapCmd remaps keys on the normal or FN layer.
 type RemapCmd struct {
-	FN    bool     `flag:"" help:"Target FN layer instead of normal layer."`
-	Reset bool     `flag:"" help:"Clear all key remaps on the target layer."`
-	Args  []string `arg:"" optional:"" help:"<src> <dst> pairs, or a YAML file path."`
+	FN       bool     `flag:"" help:"Target FN layer instead of normal layer."`
+	Reset    bool     `flag:"" help:"Clear all key remaps on the target layer."`
+	Wireless bool     `flag:"" aliases:"2.4g" help:"Send over the 2.4G dongle (Linux only, experimental)."`
+	Args     []string `arg:"" optional:"" help:"<src> <dst> pairs, or a YAML file path."`
 }
 
 // Run executes the remap command.
 func (c *RemapCmd) Run() error {
+	if c.Wireless && c.Reset {
+		var indices []uint8
+		for _, name := range c.Args {
+			idx, ok := aula.KeyNameToIndex[strings.ToLower(name)]
+			if !ok {
+				return fmt.Errorf("unknown key '%s' (run 'aula keys' to list)", name)
+			}
+			indices = append(indices, idx)
+		}
+		wdev, err := aula.OpenWireless()
+		if err != nil {
+			return err
+		}
+		defer wdev.Close()
+		if err := wdev.ResetKeys(indices, c.FN); err != nil {
+			return err
+		}
+		fmt.Println("2.4G remaps cleared.")
+		return nil
+	}
 	if c.Reset {
 		dev, err := aula.Open()
 		if err != nil {
@@ -392,7 +413,24 @@ func (c *RemapCmd) Run() error {
 	if c.FN {
 		fnLayer = true
 	}
+	if c.Wireless {
+		wdev, err := aula.OpenWireless()
+		if err != nil {
+			return err
+		}
+		defer wdev.Close()
 
+		layer := "normal"
+		if fnLayer {
+			layer = "FN"
+		}
+		fmt.Printf("Sending %d remap(s) to %s layer over 2.4G\n", len(remaps), layer)
+		if err := wdev.SetKeyRemap(remaps, fnLayer); err != nil {
+			return err
+		}
+		fmt.Println("OK")
+		return nil
+	}
 	dev, err := aula.Open()
 	if err != nil {
 		return err
