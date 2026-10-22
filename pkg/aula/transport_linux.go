@@ -143,6 +143,14 @@ func (t *goUSBTransport) Close() {
 		t.intf.Close()
 	}
 	if t.cfg != nil {
+		// Config() with auto-detach unbinds the kernel driver from every
+		// interface, but libusb only reattaches the ones we claimed. Claim and
+		// release the rest so the keyboard/mouse interfaces come back.
+		for _, n := range []int{0, 1, 2} {
+			if intf, err := t.cfg.Interface(n, 0); err == nil {
+				intf.Close()
+			}
+		}
 		t.cfg.Close()
 	}
 	if t.dev != nil {
